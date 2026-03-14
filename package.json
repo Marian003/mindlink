@@ -1,0 +1,21 @@
+{
+  "name": "mindlink",
+  "version": "0.0.1",
+  "private": true,
+  "packageManager": "pnpm@9.0.0",
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "db:up": "docker compose -f docker/docker-compose.yml up -d",
+    "db:down": "docker compose -f docker/docker-compose.yml down",
+    "db:migrate": "pnpm --filter @mindlink/server db:migrate",
+    "db:seed": "pnpm --filter @mindlink/server db:seed",
+    "db:generate": "pnpm --filter @mindlink/server db:generate && pnpm --filter @mindlink/web exec prisma generate --schema=../server/prisma/schema.prisma"
+  },
+  "devDependencies": {
+    "turbo": "^2.0.0",
+    "typescript": "^5.4.5"
+  }
+}

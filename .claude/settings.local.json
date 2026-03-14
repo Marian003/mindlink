@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(PRISMA_MIGRATE_SKIP_GENERATE=false npx prisma db push)",
+      "Bash(npx prisma:*)",
+      "Bash(npx tsc:*)",
+      "Bash(pnpm install:*)"
+    ]
+  }
+}
