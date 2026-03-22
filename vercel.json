@@ -1,0 +1,6 @@
+{
+  "buildCommand": "cd apps/web && npx prisma generate --schema=../server/prisma/schema.prisma && cd ../.. && pnpm turbo build --filter=@mindlink/web",
+  "installCommand": "pnpm install",
+  "framework": "nextjs",
+  "outputDirectory": "apps/web/.next"
+}

@@ -25,7 +25,7 @@ export function ParticipantBar({ awareness, currentClientId }: ParticipantBarPro
     if (!awareness) return;
 
     function update() {
-      const states = awareness.getStates();
+      const states = awareness!.getStates();
       const list: Participant[] = [];
 
       states.forEach((state, clientId) => {

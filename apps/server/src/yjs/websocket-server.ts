@@ -1,14 +1,13 @@
 import { createRequire } from "node:module";
 import { WebSocketServer } from "ws";
+import type { Server as HttpServer, IncomingMessage } from "node:http";
+import type { Duplex } from "node:stream";
 import { startOrchestrator } from "../agents/room-agent-manager";
 import type { AgentConfig } from "../agents/types";
 
 // Use y-websocket's battle-tested connection handler.
-// It handles all Yjs sync + awareness protocol correctly for the installed y-protocols version.
 const _require = createRequire(import.meta.url);
 const { setupWSConnection, getYDoc } = _require("y-websocket/bin/utils");
-
-const WS_PORT = parseInt(process.env.WS_PORT ?? "4444", 10);
 
 // Sub-room suffixes — only start orchestrators for the main document room
 const ROOM_SUFFIXES = ["-presence", "-code", "-writing", "-whiteboard", "-brainstorm"];
@@ -113,38 +112,44 @@ const BUILT_IN_AGENTS: AgentConfig[] = [
   },
 ];
 
-const wss = new WebSocketServer({ port: WS_PORT });
+/**
+ * Attaches a Yjs WebSocket handler to an existing HTTP server.
+ * WebSocket connections are served at /ws/<roomId>.
+ * This allows the API and WS to share a single port (required for Railway).
+ */
+export function createWSSHandler(httpServer: HttpServer) {
+  const wss = new WebSocketServer({ noServer: true });
 
-wss.on("connection", (ws, req) => {
-  // Delegate all Yjs sync + awareness protocol to y-websocket's implementation
-  setupWSConnection(ws, req);
+  httpServer.on("upgrade", (req: IncomingMessage, socket: Duplex, head: Buffer) => {
+    const url = req.url ?? "";
+    // Only handle WebSocket upgrades on the /ws path
+    if (!url.startsWith("/ws")) {
+      socket.destroy();
+      return;
+    }
+    wss.handleUpgrade(req, socket as any, head, (ws) => {
+      wss.emit("connection", ws, req);
+    });
+  });
 
-  // Extract doc/room name — same logic setupWSConnection uses internally:
-  // URL is /<roomId>?room=<roomId>, path gives the doc name
-  const docName = decodeURIComponent((req.url ?? "").slice(1).split("?")[0]);
+  wss.on("connection", (ws, req: IncomingMessage) => {
+    const url = req.url ?? "";
+    // Strip /ws/ prefix: /ws/roomId → roomId, /ws/roomId?room=roomId → roomId
+    const docName = decodeURIComponent(url.replace(/^\/ws\//, "").split("?")[0]);
 
-  // Start the agent orchestrator once per main document room
-  if (isMainRoom(docName) && !orchestratedRooms.has(docName)) {
-    orchestratedRooms.add(docName);
-    // getYDoc retrieves the same WSSharedDoc that setupWSConnection just created
-    const doc = getYDoc(docName);
-    startOrchestrator(docName, BUILT_IN_AGENTS, doc);
-  }
+    // Delegate all Yjs sync + awareness protocol to y-websocket's implementation
+    setupWSConnection(ws, req, { docName });
 
-  console.log(`[WS] Client connected → ${docName || "(root)"}`);
-});
+    // Start the agent orchestrator once per main document room
+    if (isMainRoom(docName) && !orchestratedRooms.has(docName)) {
+      orchestratedRooms.add(docName);
+      const doc = getYDoc(docName);
+      startOrchestrator(docName, BUILT_IN_AGENTS, doc);
+    }
 
-wss.on("listening", () => {
-  console.log(`[WS] MindLink WebSocket server running on ws://localhost:${WS_PORT}`);
-});
+    console.log(`[WS] Client connected → ${docName || "(root)"}`);
+  });
 
-wss.on("error", (err: NodeJS.ErrnoException) => {
-  if (err.code === "EADDRINUSE") {
-    console.error(`[WS] Port ${WS_PORT} already in use — stop the old process and restart`);
-    process.exit(1);
-  } else {
-    console.error("[WS] WebSocket server error:", err);
-  }
-});
-
-export { wss };
+  console.log(`[WS] WebSocket handler attached at /ws`);
+  return wss;
+}

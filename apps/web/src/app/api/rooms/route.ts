@@ -9,9 +9,9 @@ export async function GET() {
 
   const res = await fetch(`${SERVER_URL}/api/rooms`, {
     headers: {
-      Authorization: `Bearer ${session.user.id}`,
-      "X-User-Email": session.user.email ?? "",
-      "X-User-Name": session.user.name ?? "",
+      Authorization: `Bearer ${session.user!.id}`,
+      "X-User-Email": session.user!.email ?? "",
+      "X-User-Name": session.user!.name ?? "",
     },
     cache: "no-store",
   });
@@ -29,9 +29,9 @@ export async function POST(req: Request) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${session.user.id}`,
-      "X-User-Email": session.user.email ?? "",
-      "X-User-Name": session.user.name ?? "",
+      Authorization: `Bearer ${session.user!.id}`,
+      "X-User-Email": session.user!.email ?? "",
+      "X-User-Name": session.user!.name ?? "",
     },
     body: JSON.stringify(body),
   });

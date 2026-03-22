@@ -10,7 +10,7 @@ export async function POST(req: Request) {
   const body = await req.json();
   const res = await fetch(`${SERVER_URL}/api/llm/test`, {
     method: "POST",
-    headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.user.id}` },
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.user!.id}` },
     body: JSON.stringify({ prompt: body.prompt, agentSlug: "sage" }),
   });
   const text = await res.text();

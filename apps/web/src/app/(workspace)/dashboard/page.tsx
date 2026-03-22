@@ -19,9 +19,9 @@ async function getRooms(userId: string) {
 
 export default async function DashboardPage() {
   const session = await auth();
-  if (!session) redirect("/auth/signin");
+  if (!session?.user) redirect("/auth/signin");
 
-  const rooms = await getRooms(session.user.id ?? "");
+  const rooms = await getRooms(session.user?.id ?? "");
 
   return (
     <div className="min-h-screen bg-[#0a0a0b]">

@@ -10,7 +10,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ slug: s
   const { slug } = await params;
   const res = await fetch(`${SERVER_URL}/api/rooms/${slug}/join`, {
     method: "POST",
-    headers: { Authorization: `Bearer ${session.user.id}` },
+    headers: { Authorization: `Bearer ${session.user!.id}` },
   });
 
   const data = await res.json();

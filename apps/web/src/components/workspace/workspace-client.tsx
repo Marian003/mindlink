@@ -18,7 +18,7 @@ import { OnboardingFlow } from "@/components/onboarding/onboarding-flow";
 import { ExportModal } from "@/components/workspace/export-modal";
 import { useAwareness } from "@/hooks/use-awareness";
 
-const WS_URL = process.env.NEXT_PUBLIC_WS_URL ?? "ws://localhost:4444";
+const WS_URL = (process.env.NEXT_PUBLIC_WS_URL ?? "ws://localhost:3001") + "/ws";
 
 const DEFAULT_AGENTS = [
   { id: "sage", name: "Sage", slug: "sage", role: "Senior Architect", color: "#3b82f6" },

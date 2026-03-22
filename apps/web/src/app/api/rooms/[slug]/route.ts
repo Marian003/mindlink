@@ -9,7 +9,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ slug: st
 
   const { slug } = await params;
   const res = await fetch(`${SERVER_URL}/api/rooms/${slug}`, {
-    headers: { Authorization: `Bearer ${session.user.id}` },
+    headers: { Authorization: `Bearer ${session.user!.id}` },
     cache: "no-store",
   });
 
@@ -24,7 +24,7 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ slug:
   const { slug } = await params;
   const res = await fetch(`${SERVER_URL}/api/rooms/${slug}`, {
     method: "DELETE",
-    headers: { Authorization: `Bearer ${session.user.id}` },
+    headers: { Authorization: `Bearer ${session.user!.id}` },
   });
 
   const data = await res.json();

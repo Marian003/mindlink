@@ -17,7 +17,7 @@ import { Toolbar } from "./toolbar";
 
 const lowlight = createLowlight(common);
 
-const WS_URL = process.env.NEXT_PUBLIC_WS_URL ?? "ws://localhost:4444";
+const WS_URL = (process.env.NEXT_PUBLIC_WS_URL ?? "ws://localhost:3001") + "/ws";
 
 interface CollaborativeEditorProps {
   roomId: string;

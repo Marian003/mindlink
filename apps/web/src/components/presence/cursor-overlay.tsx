@@ -26,7 +26,7 @@ export function CursorOverlay({ awareness, currentClientId }: CursorOverlayProps
 
     function update() {
       const now = Date.now();
-      const states = awareness.getStates();
+      const states = awareness!.getStates();
       const remote: RemoteCursor[] = [];
 
       states.forEach((state, clientId) => {

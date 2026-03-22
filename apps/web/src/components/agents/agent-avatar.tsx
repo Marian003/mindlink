@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import React from "react";
 
 interface AgentAvatarProps {
   name: string;
@@ -27,7 +28,7 @@ export function AgentAvatar({ name, color, role, thinking, size = "md" }: AgentA
     <div className="relative flex-shrink-0">
       <motion.div
         className={`${sizes[size]} rounded-full flex items-center justify-center font-semibold text-white ring-2`}
-        style={{ backgroundColor: color, ringColor: color }}
+        style={{ backgroundColor: color, ["--tw-ring-color" as string]: color } as React.CSSProperties}
         animate={thinking ? { opacity: [1, 0.5, 1] } : { opacity: 1 }}
         transition={thinking ? { duration: 1.2, repeat: Infinity, ease: "easeInOut" } : {}}
       >

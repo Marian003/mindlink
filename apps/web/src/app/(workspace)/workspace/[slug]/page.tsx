@@ -10,7 +10,7 @@ interface WorkspacePageProps {
 
 export default async function WorkspacePage({ params }: WorkspacePageProps) {
   const session = await auth();
-  if (!session) redirect("/auth/signin");
+  if (!session?.user) redirect("/auth/signin");
 
   const { slug } = await params;
 
@@ -31,12 +31,12 @@ export default async function WorkspacePage({ params }: WorkspacePageProps) {
         <main className="flex-1 overflow-hidden flex flex-col">
           <WorkspaceClient
             roomId={slug}
-            userName={session.user.name ?? "Anonymous"}
-            userId={session.user.id ?? "anonymous"}
+            userName={session.user?.name ?? "Anonymous"}
+            userId={session.user?.id ?? "anonymous"}
           />
         </main>
         <aside className="w-64 border-l border-white/10 flex flex-col flex-shrink-0">
-          <MemberList roomSlug={slug} currentUserId={session.user.id ?? ""} />
+          <MemberList roomSlug={slug} currentUserId={session.user?.id ?? ""} />
         </aside>
       </div>
     </div>

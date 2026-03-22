@@ -5,7 +5,8 @@ import dynamic from "next/dynamic";
 import * as Y from "yjs";
 import { WebsocketProvider } from "y-websocket";
 import { MonacoBinding } from "y-monaco";
-import type { editor as MonacoEditor } from "monaco-editor";
+import type { OnMount } from "@monaco-editor/react";
+type MonacoEditorInstance = Parameters<OnMount>[0];
 import { CodeToolbar } from "./code-toolbar";
 
 // Dynamic import — Monaco must not SSR
@@ -18,7 +19,7 @@ const MonacoEditorComponent = dynamic(
   )}
 );
 
-const WS_URL = process.env.NEXT_PUBLIC_WS_URL ?? "ws://localhost:4444";
+const WS_URL = (process.env.NEXT_PUBLIC_WS_URL ?? "ws://localhost:3001") + "/ws";
 
 interface CollaborativeCodeEditorProps {
   roomId: string;
@@ -43,7 +44,7 @@ export function CollaborativeCodeEditor({
   const ydocRef = useRef<Y.Doc | null>(null);
   const providerRef = useRef<WebsocketProvider | null>(null);
   const bindingRef = useRef<MonacoBinding | null>(null);
-  const editorRef = useRef<MonacoEditor.IStandaloneCodeEditor | null>(null);
+  const editorRef = useRef<MonacoEditorInstance | null>(null);
 
   useEffect(() => {
     const ydoc = new Y.Doc();
@@ -66,7 +67,7 @@ export function CollaborativeCodeEditor({
     };
   }, [roomId, token]);
 
-  function handleEditorDidMount(editor: MonacoEditor.IStandaloneCodeEditor) {
+  function handleEditorDidMount(editor: MonacoEditorInstance) {
     editorRef.current = editor;
 
     if (ydocRef.current && providerRef.current) {

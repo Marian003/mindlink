@@ -1,5 +1,3 @@
-import type { AgentConfig } from "./index";
-
 export interface RoomTemplate {
   name: string;
   description: string;

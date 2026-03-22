@@ -15,7 +15,7 @@ export default async function AgentBuilderPage() {
         <span className="text-white/20">/</span>
         <span className="text-white font-medium">Build an Agent</span>
       </header>
-      <AgentBuilder userId={session.user.id ?? ""} />
+      <AgentBuilder userId={session.user?.id ?? ""} />
     </div>
   );
 }
