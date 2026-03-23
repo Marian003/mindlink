@@ -11,8 +11,6 @@ build
 *.tsbuildinfo
 
 # Environment files
-.env
-.env.*
 !.env.example
 
 # Turborepo
@@ -32,3 +30,4 @@ pnpm-debug.log*
 .idea
 *.swp
 *.swo
+config.bat
